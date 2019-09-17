@@ -9,25 +9,32 @@ namespace Mastermind
 {
     class RandomNumber
     {
-        public List<int> GenerateRandom()
+        public Dictionary<int,int> GenerateRandom()
         {
             Random random = new Random();
-            List<int> randNumber = new List<int>();
+            Dictionary<int, int> randNumber = new Dictionary<int, int>();
             
 
             for (int i = 0; i < 4; i++)
             {
-                randNumber.Add(random.Next(1, 6));
+                randNumber.Add(i,random.Next(1, 6));
             }
             return randNumber;
         }
 
-        public int Compare(List<int> l1, List<int> l2)
+        public int Compare(Dictionary<int, int> l1, Dictionary<int, int> l2)
         {
 
-            string s1 = string.Join("", l1.ToArray());
-            string s2 = string.Join("", l2.ToArray());
+            string s1 = string.Join("", l1.Values.ToArray());
+            string s2 = string.Join("", l2.Values.ToArray());
             List<int> temp = new List<int>();
+
+            Dictionary<int, int> d = new Dictionary<int, int>();
+            Dictionary<int, int> d1 = new Dictionary<int, int>();
+            Dictionary<int, int> temp1 = new Dictionary<int, int>();
+
+
+
 
             Console.WriteLine("Here is your input: " + s1);
             Console.WriteLine("Here is the random number: " + s2);
@@ -38,33 +45,43 @@ namespace Mastermind
                 return 0;
             }
 
-            IEnumerable<int> x = l2.Except(l1);
-            foreach (var l in x)
-                temp.Add(l);
+            IEnumerable<KeyValuePair<int, int>> x = l1.Except(l2);
 
-            x = l2.Except(temp);
-            foreach ( var t in x)
+            foreach (KeyValuePair<int, int> v in x)
             {
-                if (l1.IndexOf(Int32.Parse(t.ToString())) == l2.IndexOf(Int32.Parse(t.ToString())))
-                    Console.WriteLine("+ " + t.ToString());
-                else
-                    Console.WriteLine("- " + t.ToString());
+                if (!l2.ContainsValue(v.Value))
+                    continue;
+                Console.WriteLine("- " + v.Value.ToString());
+                temp1.Add(v.Key,v.Value);
             }
-                           
-                                      
+
                 
-               
-                    
-            
+
+            x = l1.Except(temp1);
+
+            foreach (KeyValuePair<int, int> v in x)
+            {
+                if (!l2.ContainsValue(v.Value))
+                    continue;
+                Console.WriteLine("+ " + v.Value.ToString());
+                //temp1.Add(v.Key, v.Value);
+            }
+
+
+
+
+
+
+
             return 1;
 
             
         }
 
-        public Boolean ValidateParams(string input, out List<int> list)
+        public Boolean ValidateParams(string input, out Dictionary<int,int> list)
         {
             int result = 0;
-            list  = new List<int>();
+            list  = new Dictionary<int, int>();
             String inputStr = String.Empty;
 
             try
@@ -88,7 +105,7 @@ namespace Mastermind
                         throw new Exception("Each digit needs to be between 1 and 6");
                     }
                     else
-                        list.Add(temp);
+                        list.Add(i,temp);
                 }
 
                 if (list.Count == 4)
@@ -114,8 +131,8 @@ namespace Mastermind
         static void Main(string[] args)
         {
             string inputStr = String.Empty;
-            List<int> input = new List<int>();
-            List<int> randNbr = new List<int>();
+            Dictionary<int, int> input = new Dictionary<int, int>();
+            Dictionary<int, int> randNbr = new Dictionary<int, int>();
             RandomNumber myNumber = new RandomNumber();
             Boolean check = false;
 
@@ -156,3 +173,4 @@ namespace Mastermind
         }
     }
 }
+
